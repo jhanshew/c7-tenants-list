@@ -7,7 +7,7 @@ This **Google Chrome** extension adds a table of tenants to the C7 admin page, a
 1. Clone this repository to your local machine.
 2. Open the Chrome browser and navigate to `chrome://extensions`.
 3. Enable Developer Mode by clicking the toggle switch in the top right corner.
-4. Click "Load Unpacked" and select the `c7-tenants-list` folder.
+4. Click "Load Unpacked" and select the `c7-tenants` folder.
 5. The extension should now be installed and ready to use.
 6. By pinning this extension you gain easy access to enabling and disabling the extension. Click icon to reveal switch.
 
