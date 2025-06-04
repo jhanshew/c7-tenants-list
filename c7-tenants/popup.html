@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    :root {
+      --color-primary: #2196F3;
+      --color-heading: #ffffff;
+      --color-text: 404142;
+      --base-font-size: 100%;
+    }
+    body {
+      width: 240px;
+      padding: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      margin: 0;
+      padding: 0;
+      font-size: var(--base-font-size);
+    }
+    h1 {
+      font-weight: 400;
+      font-size: calc(var(--base-font-size) * 1.125);
+      margin: 0;
+      color: var(--color-heading);
+      background: var(--color-primary);
+      padding: 10px 14px;
+    }
+    .switch-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 22px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 5px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #2196F3;
+    }
+    input:checked + .slider:before {
+      transform: translateX(16px);
+    }
+    .label {
+      vertical-align: super;
+      color: #404142;
+      font-size: calc(var(--base-font-size) * 0.75);
+      font-weight: 400;
+    }
+  </style>
+</head>
+<body>
+  <h1>C7 Tenants List</h1>
+  <div class="switch-container">
+    <label class="switch">
+      <input type="checkbox" id="toggle">
+      <span class="slider"></span>
+    </label>
+    <span class="label">Enable Tenants List</span>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html> 
