@@ -1,6 +1,6 @@
-# C7 Tenants List
+# C7 Tenants List for Google Chrome
 
-This extension adds a table of tenants to the C7 admin page, allowing you to easily see which tenants you have access to.
+This **Google Chrome** extension adds a table of tenants to the C7 admin page, allowing you to easily see which tenants you have access to.
 
 ## Installation
 
