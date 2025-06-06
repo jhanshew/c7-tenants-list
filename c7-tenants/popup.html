@@ -24,11 +24,16 @@
       background: var(--color-primary);
       padding: 10px 14px;
     }
+    .settings-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 21px 14px;
+    }
     .switch-container {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 14px;
     }
     .switch {
       position: relative;
@@ -79,12 +84,21 @@
 </head>
 <body>
   <h1>C7 Tenants List</h1>
-  <div class="switch-container">
-    <label class="switch">
-      <input type="checkbox" id="toggle">
-      <span class="slider"></span>
-    </label>
-    <span class="label">Enable Tenants List</span>
+  <div class="settings-container">
+    <div class="switch-container">
+      <label class="switch">
+        <input type="checkbox" id="list-toggle">
+        <span class="slider"></span>
+      </label>
+      <span class="label">Enable Tenants List</span>
+    </div>
+    <div class="switch-container">
+      <label class="switch">
+        <input type="checkbox" id="search-toggle">
+        <span class="slider"></span>
+      </label>
+      <span class="label">Show Tenant Search</span>
+    </div>
   </div>
   <script src="popup.js"></script>
 </body>

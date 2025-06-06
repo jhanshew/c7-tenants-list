@@ -8,7 +8,10 @@ function initializeC7Tenants() {
     let fetchInterceptorSetup = false;
     let checkInterval = null;
     let isEnabled = true;
+    let searchEnabled = false;
     let urlObserver = null;
+
+    const targetString = '#root > div > div:has(div > form)';
 
     function getColorMode() {
         const cookieMode = document.cookie.split('; ').find(row => row.startsWith('color-mode='))?.split('=')[1];
@@ -17,10 +20,11 @@ function initializeC7Tenants() {
     }
 
     function injectStyles() {
-        if (document.querySelector('#c7-tenants-styles')) return;
+        const oldStyle = document.querySelector('#c7-tenants-styles');
+        if (oldStyle) oldStyle.remove();
         const style = document.createElement('style');
         style.id = 'c7-tenants-styles';
-        style.textContent = `
+        let stylesContent = `
             .c7-tenants-table-container {
                 margin: 40px auto;
                 padding: 40px 50px 50px;
@@ -28,7 +32,7 @@ function initializeC7Tenants() {
                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
                 max-width: 90%;
                 width: 875px;
-                font-size: 0.9rem;
+                font-size: 13px;
             }
             .c7-tenants-table {
                 width: 100%;
@@ -50,9 +54,22 @@ function initializeC7Tenants() {
                 text-decoration: none;
             }
             .c7-title {
-                margin: 0 0 20px 0;
-                font-size: 24px;
+                margin: 0 0 10px 0;
+                font-size: 22px;
                 font-weight: 500;
+                display: inline-flex;
+                align-items: start;
+                gap: 3px;
+            }
+            .c7-list-count {
+                background: #007bff;
+                border-radius: 2px;
+                padding: 2px 4px;
+                color: white;
+                font-size: 10px;
+                font-weight: 700;
+                line-height: 1;
+                letter-spacing: 0.025rem;
             }
             [data-theme="light"].c7-tenants-table-container {
                 background: white;
@@ -97,6 +114,8 @@ function initializeC7Tenants() {
                 }
             }
         `;
+
+        style.textContent = stylesContent;
         document.head.appendChild(style);
     }
 
@@ -167,9 +186,14 @@ function initializeC7Tenants() {
         container.appendChild(table);
 
         const title = document.createElement('h2');
-        title.textContent = `Your Tenants (${tenants.length})`;
+        title.textContent = `Your Tenants`;
         title.className = 'c7-title';
         container.insertBefore(title, table);
+
+        const listCount = document.createElement('span');
+        listCount.textContent = `${tenants.length}`;
+        listCount.className = 'c7-list-count';
+        title.appendChild(listCount);
 
         return container;
     }
@@ -249,12 +273,6 @@ function initializeC7Tenants() {
         if (!existingTable) {
             const table = createTenantsTable(tenantsData);
             targetElement.appendChild(table);
-            
-            // Hide the existing container after successful table creation
-            const existingContainer = document.querySelector('#root > div > div > :has(h2)');
-            if (existingContainer) {
-                existingContainer.style.display = 'none';
-            }
         }
     }
 
@@ -357,16 +375,45 @@ function initializeC7Tenants() {
         setupFetchInterceptor();
         injectStyles();
 
-        const observer = new MutationObserver(() => {
-            if (isTenantPage()) {
-                attemptToCreateTable();
+        // Observer to handle removing the hide style and setting width when the target container appears
+        const searchContainerObserver = new MutationObserver((mutations, obs) => {
+            // Target the parent of the parent of the form
+            const targetElement = document.querySelector(targetString);
+            if (targetElement) {
+                 // Use the global searchEnabled variable set on initial load
+                if (searchEnabled === true) {
+                    // Remove the injected hiding style and set width
+                    const hideStyle = document.querySelector('#c7-search-container-hide-style');
+                    if (hideStyle) hideStyle.remove();
+                    targetElement.style.width = '875px'; // Set width here
+                }
+                // If searchEnabled is false, the injected CSS handles hiding, no width set
+
+                // Disconnect once the element is found (regardless of searchEnabled state)
+                obs.disconnect();
             }
         });
 
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
+        // Start observing the body for changes that might include the target container
+        // Check if document.body exists before observing
+        if (document.body) {
+            searchContainerObserver.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        } else {
+            // If body doesn't exist yet, wait for DOMContentLoaded
+            document.addEventListener('DOMContentLoaded', () => {
+                if (document.body) {
+                    searchContainerObserver.observe(document.body, {
+                        childList: true,
+                        subtree: true
+                    });
+                }
+            });
+        }
+
+        // No immediate check here, rely solely on the observer to find the element.
 
         attemptToCreateTable();
     }
@@ -425,9 +472,30 @@ function initializeC7Tenants() {
     }
 
     // Initialize immediately
-    initialize();
-    setupUrlMonitoring();
-    setTimeout(checkExistingRequests, 1000);
+    chrome.storage.local.get(['listEnabled', 'searchEnabled'], (result) => {
+        isEnabled = result.listEnabled !== false;
+        searchEnabled = result.searchEnabled === true;
+
+        // Dynamically inject CSS to hide the search container if searchEnabled is false as early as possible
+        const styleId = 'c7-search-container-hide-style';
+        const oldSearchStyle = document.querySelector('#' + styleId);
+        if (oldSearchStyle) oldSearchStyle.remove();
+
+        if (searchEnabled === false) {
+            const style = document.createElement('style');
+            style.id = styleId;
+            style.textContent = `
+                ${targetString} {
+                    display: none !important;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        initialize();
+        setupUrlMonitoring();
+        setTimeout(checkExistingRequests, 1000);
+    });
 
     // Handle page load events
     if (document.readyState === 'loading') {
@@ -467,15 +535,6 @@ function initializeC7Tenants() {
         xhrInterceptorSetup = false;
         fetchInterceptorSetup = false;
         checkAndInitialize();
-    });
-
-    chrome.storage.local.get(['enabled'], (result) => {
-        isEnabled = result.enabled !== false;
-        if (isEnabled) {
-            initialize();
-            setupUrlMonitoring();
-            setTimeout(checkExistingRequests, 1000);
-        }
     });
 
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
