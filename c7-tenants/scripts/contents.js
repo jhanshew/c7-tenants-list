@@ -368,7 +368,7 @@ function initializeC7Tenants() {
     }
 
     function initialize() {
-        if (isInitialized || !isEnabled) return;
+        if (isInitialized || !isEnabled || !isTenantPage()) return;
         isInitialized = true;
         
         setupXHRInterceptor();
