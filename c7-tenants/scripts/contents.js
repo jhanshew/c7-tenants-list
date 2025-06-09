@@ -386,6 +386,9 @@ function initializeC7Tenants() {
                     const hideStyle = document.querySelector('#c7-search-container-hide-style');
                     if (hideStyle) hideStyle.remove();
                     targetElement.style.width = '875px'; // Set width here
+                } else {
+                  // Remove width if present and was not removed
+                  targetElement.style.width = '';
                 }
                 // If searchEnabled is false, the injected CSS handles hiding, no width set
 
