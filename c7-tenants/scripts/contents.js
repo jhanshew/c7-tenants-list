@@ -11,7 +11,7 @@ function initializeC7Tenants() {
     let searchEnabled = false;
     let urlObserver = null;
 
-    const targetString = '#root > div > div:has(div > form)';
+    const targetString = '#root > div > div:has(div > form div[data-testid="inline-search"])';
 
     function getColorMode() {
         const cookieMode = document.cookie.split('; ').find(row => row.startsWith('color-mode='))?.split('=')[1];
