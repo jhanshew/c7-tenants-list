@@ -15,10 +15,10 @@ This **Google Chrome** extension adds a table of tenants to the C7 admin page, a
 
 ## Usage
 
-Once installed, the extension will automatically add a table of tenants to the C7 admin page. You can also enable or disable the extension from the popup menu.
+Once installed, the extension will automatically add a table of tenants to the C7 admin page, and hide the existing search form. You can also enable or disable the extension from the popup menu, as well as choose to show both the search form and the tentant list.
 
 ## Credits
-A big thank you to [Michael Bourne](https://github.com/michaelbourne) and [Sean Bryant of Gorilion](https://www.gorilion.com/) for creating the large majority of underlying code for this extension. I simply adjusted it to work as a Chrome extension and added a few features.
+A big thank you to [Michael Bourne from 5forests](https://5forests.com) for creating the large majority of underlying code for this extension, and [Sean Bryant of Gorilion](https://www.gorilion.com/) testing Michael's code before release. I simply adjusted it to work as a Chrome extension and added a few features.
 
 ## License
 
